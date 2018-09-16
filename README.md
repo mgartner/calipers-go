@@ -15,7 +15,8 @@ import (
 func main() {
   result, err := calipers.Measure("path/to/file.png")
 
-  fmt.Println(result) // e.g. Measurement{png, 100, 60}
+  fmt.Printf("%#v\n", result)
+  // calipers.Measurement{Type:"png", Width: 100, Height:60}
 }
 ```
 
