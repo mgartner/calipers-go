@@ -1,3 +1,5 @@
+// Package calipers measures the dimensions of image files
+// quickly by not loading the entire image into memory.
 package calipers
 
 import (
@@ -8,8 +10,8 @@ import (
 	"os"
 )
 
-// Measurement struct contains information about the type and dimensions of an
-// image.
+// Measurement struct contains information about the type and
+// dimensions (in pixels) of an image.
 type Measurement struct {
 	Type   ImageType
 	Width  int
