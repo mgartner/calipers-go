@@ -22,9 +22,9 @@ func main() {
 
 # Supported File Types
 
+* GIF
 * PNG
 * ~JPEG~ (coming soon)
-* ~GIF~ (coming soon)
 
 # Contributing
 
