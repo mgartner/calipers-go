@@ -47,6 +47,18 @@ func generateTests(path string, t ImageType) ([]testCase, error) {
 	return tc, nil
 }
 
+func TestValidGIF(t *testing.T) {
+	tests, err := generateTests("assets/gif", GIF)
+	assert.NoError(t, err)
+
+	for _, tt := range tests {
+		result, err := Measure(tt.path)
+
+		assert.NoError(t, err)
+		assert.Equal(t, result, tt.expectedMeasurement)
+	}
+}
+
 func TestValidPNG(t *testing.T) {
 	tests, err := generateTests("assets/png", PNG)
 	assert.NoError(t, err)

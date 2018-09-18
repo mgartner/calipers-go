@@ -22,6 +22,8 @@ type Measurement struct {
 type ImageType string
 
 const (
+	// GIF format.
+	GIF ImageType = "gif"
 	// PNG format.
 	PNG ImageType = "png"
 	// JPEG format.
@@ -29,6 +31,7 @@ const (
 )
 
 var pngHeader = []byte{0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A}
+var gifHeader = []byte{0x47, 0x49, 0x46, 0x38}
 
 // Measure returns the dimensions of an image file.
 func Measure(path string) (Measurement, error) {
@@ -44,6 +47,8 @@ func Measure(path string) (Measurement, error) {
 	}
 
 	switch imageType {
+	case GIF:
+		return measureGIF(file)
 	case PNG:
 		return measurePNG(file)
 	default:
@@ -62,11 +67,30 @@ func detect(file *os.File) (ImageType, error) {
 	}
 
 	switch {
+	case bytes.HasPrefix(buffer, gifHeader):
+		return GIF, nil
 	case bytes.Equal(buffer, pngHeader):
 		return PNG, nil
 	default:
 		return "", errors.New("unknown file type")
 	}
+}
+
+func measureGIF(file *os.File) (Measurement, error) {
+	_, err := file.Seek(6, 0)
+	if err != nil {
+		return Measurement{}, err
+	}
+
+	buffer := make([]byte, 4)
+	if _, err := io.ReadFull(file, buffer); err != nil {
+		return Measurement{}, errors.New("unable to read GIF")
+	}
+
+	width := binary.LittleEndian.Uint16(buffer[0:2])
+	height := binary.LittleEndian.Uint16(buffer[2:4])
+
+	return Measurement{GIF, int(width), int(height)}, nil
 }
 
 func measurePNG(file *os.File) (Measurement, error) {
